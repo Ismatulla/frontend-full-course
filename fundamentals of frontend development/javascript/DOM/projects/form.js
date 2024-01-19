@@ -6,57 +6,39 @@ const email = document.querySelector('input[data-email="email"]')
 const firstPassword = document.getElementsByClassName('firstPassword')[0]
 const secondPassword = document.getElementsByClassName('secondPassword')[0]
 const inputSubmit = document.querySelector('input[type="submit"]')
+
+const printError = (inputName, errorMessage) => {
+  const error = document.createElement('h2')
+  error.className = "errorText"
+  error.innerText = `${errorMessage} 😀!`
+  inputName.insertAdjacentElement('afterend', error)
+  setTimeout(() => {
+    error.remove()
+  }, [1500])
+
+}
 console.log(inputSubmit)
-form.addEventListener('submit', () => {
+form.addEventListener('submit', (e) => {
+  e.preventDefault()
   if (firstName.value === '') {
-    const firstNameError = document.createElement('h2')
-    firstNameError.className = "errorText"
-    firstNameError.innerText = 'Iltimos ismingizni kiriting 😀!'
-    firstName.insertAdjacentElement('afterend', firstNameError)
-    setTimeout(() => {
-      firstNameError.remove()
-    }, [1000])
+    printError(firstName, 'ismingizni kiriting')
     return
   }
 
   if (lastName.value === "") {
-    const lastNameError = document.createElement('h2')
-    lastNameError.className = "errorText"
-    lastNameError.innerText = 'Iltimos familiyangizni  kiriting 😀!'
-    lastName.insertAdjacentElement('afterend', lastNameError)
-    setTimeout(() => {
-      lastNameError.remove()
-    }, [1500])
+    printError(lastName, 'familiyangizni kiriting')
     return
   }
   if (email.value === '') {
-    const emailError = document.createElement('h2')
-    emailError.className = "errorText"
-    emailError.innerText = 'Iltimos emaylingizni  kiriting 😀!'
-    email.insertAdjacentElement('afterend', emailError)
-    setTimeout(() => {
-      emailError.remove()
-    }, [1500])
+    printError(email, 'emailingizni kiriting')
     return
   }
   if (firstPassword.value === '') {
-    const passwordError = document.createElement('h2')
-    passwordError.className = "errorText"
-    passwordError.innerText = 'Iltimos parolingizni   kiriting 😀!'
-    firstPassword.insertAdjacentElement('afterend', passwordError)
-    setTimeout(() => {
-      passwordError.remove()
-    }, [1500])
+    printError(firstPassword, 'parolingizni kiriting')
     return
   }
   if (secondPassword.value === '') {
-    const passwordError = document.createElement('h2')
-    passwordError.className = "errorText"
-    passwordError.innerText = 'Iltimos parolni qaytadan kiriting   kiriting 😀!'
-    secondPassword.insertAdjacentElement('afterend', passwordError)
-    setTimeout(() => {
-      passwordError.remove()
-    }, [1500])
+    printError(secondPassword, 'Iltimos parolni qaytadan kiriting')
     return
   }
   if (!secondPassword.value.includes(firstPassword.value) || !secondPassword.value.length === firstPassword.value.length) {
@@ -64,7 +46,7 @@ form.addEventListener('submit', () => {
     return
   } else {
     alert('Sizning accountingiz muvaffaqiyatli yaratildi 😃')
-
+    form.submit()
   }
 })
 
