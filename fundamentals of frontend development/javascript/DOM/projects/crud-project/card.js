@@ -1,170 +1,176 @@
-const singleCard = document.querySelector('.card')
-const deleteWindow = document.querySelector('.modal_window_delete')
-const modalDeleteBtn = document.querySelector(".modal_delete_btn")
+// card container
+const cardSection = document.querySelector('.card_section') 
+
+// delete elements
+const deleteWindow = document.querySelector('.modal_window_delete')  
+const modalDeleteBtn = document.querySelector(".modal_delete_btn") 
 const overlay = document.querySelector('.overlay')
-const addNewCard = document.querySelector('.add_card')
-const deleteBtn = document.querySelector('.card_delete')
-const updateBtn = document.querySelector('.card_update')
 
-
-const updateForm = document.querySelector(".modal_update")
+//close btns
 const closeFormBtn = document.querySelector(".modal_close_btn")
+const closeFormBtnUpdate = document.querySelector(".modal_close_btn_update")
 
-// single card data access
-const cardHeader = document.querySelector(".card_header")
-const cardImage = document.querySelector('.card_image')
-const date = document.querySelector('.time')
-const cardLocation = document.querySelector('.location')
 
-// update for form
-const updateImg = document.querySelector('.update_file')
+
+// update card
+const updateForm = document.querySelector(".modal_update")
 const updateTitle = document.querySelector('.update_title')
 const updateDate = document.querySelector('.update_date')
 const updateLocation = document.querySelector('.update_location')
 
 // create a card 
+const addNewCard = document.querySelector('.add_card')
 const createForm = document.querySelector('.modal_create')
 const createTitle = document.querySelector(".create_title");
-const createDate = document.querySelector(".create_date");
+const createDate = document.querySelector(".create_date"); 
 const createLocation = document.querySelector(".create_location");
-const createImage = document.querySelector('.create_img')
 
+function generateRandomId(){
+  return Math.round(Math.random() * 9)
+}
 
+let formData =
+ [{ title: 'my first title', time: "01/23/2024", location: "North Holland", id: 1 }]
 
-
-let titleValue
-let locationsValue
-let timeValue
-let imgUpload
-
-
-
-// delete button and overlay
-deleteBtn.addEventListener('click', () => {
-  console.log('clicked')
-  deleteWindow.classList.add('active')
-  overlay.classList.add('active')
-})
+ // overlay close  (birinchi navbatda overlay va form lani chiqarib ko'rsatish)
 
 overlay.addEventListener('click', () => {
   overlay.classList.remove('active')
   deleteWindow.classList.remove('active')
+  createForm.classList.remove('active')
   updateForm.classList.remove('active')
 })
 
-// delete 
-modalDeleteBtn.addEventListener('click', () => {
-  deleteWindow.classList.remove('active')
-  overlay.classList.remove('active')
-  singleCard.remove()
-})
-
-// update form
-
-updateBtn.addEventListener('click', () => {
-  console.log('clicked')
-  updateForm.classList.add('active')
-  overlay.classList.add('active')
-})
-
-// image upload
-let newImage =
-  updateImg.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        newImage = event.target.result;
-
-      };
-      reader.readAsDataURL(file);
-    }
-  });
-
-updateTitle.addEventListener('change', () => {
-  cardHeader.innerText = updateTitle.value
-  console.log(updateTitle.value)
-})
-
-updateDate.addEventListener('input', () => {
-  date.innerText = updateDate.value
-
-})
-updateLocation.addEventListener('change', () => {
-  cardLocation.innerText = updateLocation.value
-})
-updateForm.addEventListener('submit', (e) => {
-  e.preventDefault()
-  cardImage.style.backgroundImage = `url('${newImage}')`;
-  updateForm.classList.remove('active')
-  overlay.classList.remove('active')
-
-});
-
-// update the form 
-
-closeFormBtn.addEventListener('click', () => {
-  console.log('close')
-  updateForm.classList.remove('active')
-  overlay.classList.remove('active')
-})
-
-// create form
-createImage.addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      imgUpload = event.target.result;
-
-    };
-    reader.readAsDataURL(file);
+// rendering existion card 
+function displayForm() {
+ 
+  if (formData.length === 0) {
+    cardSection.innerHTML = ""
   }
-});
+  const cardsHtml = formData.map((data) => `<article class="card" id=${data.id} >
+    <div class="card_image">
+      <figure class="card_icons">
+        <button class="card_delete"><i class="fa-regular fa-trash-can card_delete"></i></button>
+        <button class="card_update"><i class="fa-regular fa-pen-to-square"></i></button>
+      </figure>
+    </div>
+    <figcaption class="card_content">
+      <h1 class="card_header">${data.title}</h1>
+      <div class="card_info">
+        <div class="card_date">
+          <i class="fa-regular fa-calendar"></i>
+          <time class="time" datetime="17/05/23">${data.time}</time>
+        </div>
+        <div class="card_location">
+          <i class="fa-solid fa-location-dot"></i>
+          <p class="location">${data.location}</p>
+        </div>
+      </div>
+    </figcaption>
+  </article>`
 
-createTitle.addEventListener('change', () => {
-  titleValue = createTitle.value
+  )
+  cardSection.innerHTML = cardsHtml.join("")
+}
+
+displayForm()
+
+function addActiveClass(element,overlay=0){
+  element.classList.add('active')
+overlay.classList.add('active')
+}
+
+function removeActiveClass(element,overlay=0){
+  element.classList.remove('active')
+overlay.classList.remove('active')
+}
+
+//  delete card functions
+let captureId
+
+cardSection.addEventListener('click', (e) => {
+  if (e.target.classList.contains('card_delete')) {
+    captureId=e.target.closest('.card').id
+    addActiveClass(deleteWindow,overlay)
+    
+  }
 })
-createDate.addEventListener('input', () => {
-  timeValue = createDate.value
+
+modalDeleteBtn.addEventListener('click', (e) => {
+ formData = formData.filter(data=>data.id !==Number(captureId))
+ removeActiveClass(deleteWindow,overlay)
+ displayForm()
 })
-createLocation.addEventListener('change', () => {
-  locationsValue = createLocation.value
+
+//
+
+
+
+// add new card
+closeFormBtn.addEventListener('click', () => {
+  removeActiveClass(createForm,overlay)
+  })
+
+addNewCard.addEventListener('click', () => {
+  addActiveClass(createForm,overlay)
 })
 
 createForm.addEventListener('submit', (e) => {
   e.preventDefault()
-  singleCard.insertAdjacentHTML('beforebegin', `<article class="card">
-  <div class="card_image" style="background-image: url('${imgUpload}')">
-    <figure class="card_icons">
-      <button class="card_delete"><i class="fa-regular fa-trash-can card_delete"></i></button>
-      <button class="card_update"><i class="fa-regular fa-pen-to-square"></i></button>
-    </figure>
-  </div>
-  <figcaption class="card_content">
-    <h1 class="card_header">${titleValue}</h1>
-    <div class="card_info">
-      <div class="card_date">
-        <i class="fa-regular fa-calendar"></i>
-        <time class="time" datetime="17/05/23">${timeValue}</time>
-      </div>
-      <div class="card_location">
-        <i class="fa-solid fa-location-dot"></i>
-        <p class="location">${locationsValue}</p>
-      </div>
-    </div>
-  </figcaption>
-</article>`)
-  createForm.classList.remove('active')
-  overlay.classList.remove('active')
-});
-
-addNewCard.addEventListener('click', () => {
-  console.log('clicked')
-  createForm.classList.add('active')
-  overlay.classList.add('active')
+  if (createTitle.value == '' || createDate.value == "" || createLocation == "") return
+  formData = [...formData, { title: createTitle.value, time: createDate.value, location: createLocation.value, id: generateRandomId() }]
+  createTitle.value = ""
+  createDate.value = ""
+  createLocation.value = ""
+removeActiveClass(createForm,overlay)
+  displayForm()
 })
 
+
+// update the card
+closeFormBtnUpdate.addEventListener('click', () => {
+  removeActiveClass(updateForm,overlay)
+})
+
+cardSection.addEventListener('click', (e) => {
+  if (e.target.classList.contains('fa-pen-to-square')) {
+    captureId=e.target.closest('.card').id
+    addActiveClass(updateForm,overlay)
+  
+   let currentData = formData.find(data=>data.id===Number(captureId))
+
+   const dateParts = currentData.time.split('/');
+   const formattedDate = `20${dateParts[2]}-${dateParts[0]}-${dateParts[1]}`;
+   updateDate.value = formattedDate;   
+   
+   updateTitle.value=currentData.title
+   updateLocation.value=currentData.location
+  }
+})
+updateForm.addEventListener('submit', (e) => {
+  e.preventDefault()
+  if (updateTitle.value == '' || updateDate.value == "" || updateLocation == "") return
+formData=formData.map(data=>{
+  if(data.id===Number(captureId)){
+    return {
+      ...data,
+      title: updateTitle.value,
+      time: updateDate.value,
+      location: updateLocation.value,
+    }
+  }
+  return data
+})
+removeActiveClass(updateForm,overlay)
+  displayForm()
+})
+
+// lets break above expression
+  // 1)called spread operator ,creating new array and putting copy of formData in it [...formData]
+  // 2) then at the end object is added to copied version of new array and updated existing formData [...formData,{}]
+  //? 3) when we spread formData it expands to objects thats why we added object at the end 
+
+  
 //? great explanation case
 // The issue is related to the fact that deleteBtn is assigned only once, and it refers to the first element with the class .card_delete that exists when the script runs. For dynamically added elements, you need to use event delegation or reassign event listeners after creating the new elements.
 

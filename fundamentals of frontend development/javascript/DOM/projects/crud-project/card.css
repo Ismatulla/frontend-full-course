@@ -125,7 +125,8 @@ button {
   display: flex;
   justify-content: space-between;
 }
-.modal_close_btn {
+.modal_close_btn,
+.modal_close_btn_update {
   display: flex;
   justify-content: center;
   background-color: #ddd;
